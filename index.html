@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Afacad&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>HangmanGame</title>
+</head>
+<style>
+    body{
+        background-color: rgb(63, 120, 242);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Raleway", sans-serif;
+    
+    }
+    .container{
+        background-color: white;
+        text-align: left;
+        padding: 40px;
+        border-radius: 10px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+.words{
+    text-align: left;
+        padding: 40px;
+        border-radius: 10px;
+        
+        width:400px
+}
+h2{
+    font-weight: 600;
+    top:10px;
+    left:32px
+}
+#scrambled-word{
+    margin-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;  
+    letter-spacing: 12px;
+}
+#alphabets{
+    width: 400px;
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+}
+.letter{
+    background-color:  rgb(87, 114, 221);
+    outline: none;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 4px;
+    margin-right: 7px;
+    margin-bottom: 5px;
+}
+.letter:hover{
+    background-color: grey;
+}
+#word{
+    margin-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;  
+    letter-spacing: 12px;
+}
+.hangman{
+    display: flex;
+    justify-content: center;
+
+    align-items: center;
+    flex-direction: column;
+    margin-right: 50px;
+    margin-top: 50px;
+}
+#incorrect{
+    color: red;
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+}
+#hint{
+    font-weight: 400;
+    font-size: 20px;
+}
+.blur{
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    width:100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+/* From https://css.glass */
+background: rgba(24, 24, 24, 0.71);
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+-webkit-backdrop-filter: blur(5.4px);
+backdrop-filter: blur(5.4px);}
+.container2{
+    background-color: white;
+    border-radius: 8px;
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.gif img{
+    width:100px;
+    height:100px;
+}
+.container2 button{
+    background-color: rgb(87, 114, 221);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.container2 h2{
+    color: green;
+}
+@media screen and (max-width:1000px){
+    .container{
+        flex-direction: column;
+        width:350px;
+        padding: 0;
+    }  
+    .words,#alphabets{
+        width:300px
+    }     
+}
+</style>
+<body>
+    <div class="container">
+        <div class="hangman">
+            <img src="hangman/hangman-0.svg" id="img" alt="">
+            <h2>HANGMAN</h2>
+        </div>
+        <div class="words">
+    <h1 id="word"></h1>
+    <h2 id="hint"></h2>
+    <h2 id="incorrect"></h2>
+
+    <div id="alphabets">
+        
+    </div>
+    </div>
+    </div>
+        <div class="blur" id="blur">
+        <div class="container2">
+            <h2 id="complement">Congratulations!!</h2>
+            <div class="gif">
+                <img src="hangman/victory.gif" id="gif" alt="">
+            </div>
+            <div>
+                <h3 id="notify">Victory</h3>
+               
+            </div>
+            <button onclick="restart()">Click me!</button>
+        </div></div>
+    
+    <script>
+        let  blur=document.getElementById("blur")
+        
+        
+        let words=[ { word: "dog", hint: "a domesticated carnivorous mammal" },
+  { word: "moon", hint: "the natural satellite of the Earth" },
+  { word: "car", hint: "a wheeled motor vehicle used for transportation" },
+  { word: "house", hint: "a building for human habitation" },
+  { word: "phone", hint: "a device used for communication" },
+  { word: "rain", hint: "precipitation in the form of water droplets" },
+  { word: "beach", hint: "a sandy shore by the sea or ocean" },
+  { word: "coffee", hint: "a brewed beverage made from roasted coffee beans" },
+  { word: "bicycle", hint: "a vehicle with two wheels propelled by pedals" },
+  { word: "music", hint: "the art of arranging sounds in time" },
+  { word: "tree", hint: "a woody perennial plant with a single main stem or trunk" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "bird", hint: "a warm-blooded egg-laying vertebrate animal" },
+  { word: "school", hint: "an institution for educating children" },
+  { word: "lake", hint: "a large body of water surrounded by land" },
+  { word: "cake", hint: "a sweet baked dessert" },
+  { word: "star", hint: "a luminous celestial body in the sky" },
+  { word: "watch", hint: "a small timepiece worn on the wrist" },
+  { word: "mountain", hint: "a large landform that rises above its surroundings" },
+  { word: "book", hint: "a written or printed work consisting of pages" },
+  { word: "flower", hint: "the reproductive structure found in flowering plants" },
+  { word: "river", hint: "a large natural stream of water flowing in a channel" },
+  { word: "shirt", hint: "a garment worn on the upper body" },
+  { word: "cloud", hint: "a visible mass of condensed water vapor" },
+  { word: "pencil", hint: "a writing implement with a graphite core" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "dog", hint: "a domesticated carnivorous mammal" },
+  { word: "moon", hint: "the natural satellite of the Earth" },
+  { word: "car", hint: "a wheeled motor vehicle used for transportation" },
+  { word: "house", hint: "a building for human habitation" },
+  { word: "phone", hint: "a device used for communication" },
+  { word: "rain", hint: "precipitation in the form of water droplets" },
+  { word: "beach", hint: "a sandy shore by the sea or ocean" },
+  { word: "coffee", hint: "a brewed beverage made from roasted coffee beans" },
+  { word: "bicycle", hint: "a vehicle with two wheels propelled by pedals" },
+  { word: "music", hint: "the art of arranging sounds in time" },
+  { word: "tree", hint: "a woody perennial plant with a single main stem or trunk" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "bird", hint: "a warm-blooded egg-laying vertebrate animal" },
+  { word: "school", hint: "an institution for educating children" },
+  { word: "lake", hint: "a large body of water surrounded by land" },
+  { word: "cake", hint: "a sweet baked dessert" },
+  { word: "star", hint: "a luminous celestial body in the sky" },
+  { word: "watch", hint: "a small timepiece worn on the wrist" },
+  { word: "mountain", hint: "a large landform that rises above its surroundings" },
+  { word: "book", hint: "a written or printed work consisting of pages" },
+  { word: "flower", hint: "the reproductive structure found in flowering plants" },
+  { word: "river", hint: "a large natural stream of water flowing in a channel" },
+  { word: "shirt", hint: "a garment worn on the upper body" },
+  { word: "cloud", hint: "a visible mass of condensed water vapor" },
+  { word: "pencil", hint: "a writing implement with a graphite core" }]
+  let alphabetesContainer=document.getElementById("alphabets")
+  let notify=document.getElementById("notify")
+  let complement=document.getElementById("complement")
+  let gif=document.getElementById("gif")
+  run()
+  function run(){
+
+    blur.style.display="none"
+    let runCount=0
+    let count=0
+    let s=""
+    let checkIndex=[]
+       
+        const alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        let random=Math.floor(Math.random()*words.length)
+        let word=words[random].word
+        let hint=words[random].hint
+        let wordContainer=document.getElementById("word")
+        wordContainer.innerText=""
+        let hintContainer=document.getElementById("hint")
+        let incorrect=document.getElementById("incorrect")
+        let image=document.getElementById("img")
+        image.src="hangman/hangman-0.svg"
+        for(x in word){
+            wordContainer.innerText+="_"
+        }
+        
+        hintContainer.innerText="Hint: "+hint
+        incorrect.innerText="0/6 chances"
+        for(x in alphabets){
+                let letter=document.createElement("button")
+            letter.className="letter"
+            letter.innerText=alphabets[x].toUpperCase()
+            letter.value=alphabets[x]
+            alphabetesContainer.appendChild(letter)
+            runCount+=1
+
+            letter.addEventListener('click',()=>{
+                s=""
+                letter.disabled=true
+                letter.style.backgroundColor="grey"
+                
+                if(word.includes(letter.value)){
+                    checkIndex.push(letter.value)
+                    for(x in word){
+                        if(checkIndex.includes(word[x])){
+                            s+=word[x].toUpperCase()
+                        }
+                        else{
+                            s+="_"
+                        }
+                    }
+                    wordContainer.innerText=s
+                }
+                else{
+                    count+=1
+                }
+                incorrect.innerText=`${count}/6 chances`
+                if(s.toLowerCase()==word){
+                    blur.style.display="flex"
+                    gif.src="hangman/victory.gif"
+                    complement.innerText="Congratulations!!"
+                    complement.style.color="green"
+                    notify.innerText="Victory";
+                    }
+                    switch (count) {
+                    case 1:
+                        image.src="hangman/hangman-1.svg"
+                        break;
+                    case 2:
+                        image.src="hangman/hangman-2.svg"
+                        break;
+                    case 3:
+                        image.src="hangman/hangman-3.svg"
+                        break;
+                    case 4:
+                        image.src="hangman/hangman-4.svg"
+                        break;
+                    case 5:
+                        image.src="hangman/hangman-5.svg"
+                        break;
+                    case 6:
+                        image.src="hangman/hangman-6.svg"
+                        break;
+                
+                    default:
+                        break;
+                }
+                if(count==6){
+                    blur.style.display="flex"
+                    gif.src="hangman/lost.gif"
+                    complement.innerText="Tough luck!!"
+                    complement.style.color="red"
+                    notify.innerText="The answer is "+word;
+                }
+                
+            })
+        }
+
+    }
+    function restart(){
+        let child = alphabetesContainer.lastElementChild;
+                    while (child) {
+                        alphabetesContainer.removeChild(child);
+                    child = alphabetesContainer.lastElementChild;
+                    }
+                    run()
+    }
+    </script>
+</body>
+</html>

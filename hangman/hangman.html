@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Afacad&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        background-color: rgb(63, 120, 242);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        font-family: "Raleway", sans-serif;
+    }
+    .container{
+        background-color: white;
+        text-align: left;
+        padding: 40px;
+        border-radius: 10px;
+        position: relative;
+    }
+
+.words{
+    text-align: left;
+        padding: 40px;
+        border-radius: 10px;
+        position: relative;
+        border:solid;
+        width:400px
+}
+h2{
+    font-weight: 600;
+    top:10px;
+    left:32px
+}
+#scrambled-word{
+    margin-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;  
+    letter-spacing: 12px;
+}
+#alphabets{
+    width: 400px;
+    display: block;
+    justify-content: center;
+    align-items: center;
+}
+.letter{
+    background-color:  rgb(87, 114, 221);
+    outline: none;
+    border: none;
+    color: white;
+    padding: 15px;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+#word{
+    margin-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;  
+    letter-spacing: 12px;
+}
+</style>
+<body>
+    <div class="container">
+        <div class="hangman">
+
+        </div>
+        <div class="words">
+    <h1 id="word"></h1>
+    <h2 id="hint"></h2>
+    <h2 id="incorrect"></h2>
+
+    <div id="alphabets">
+        
+    </div>
+    </div>
+    </div>
+    <script>
+        
+        let words=[ { word: "dog", hint: "a domesticated carnivorous mammal" },
+  { word: "moon", hint: "the natural satellite of the Earth" },
+  { word: "car", hint: "a wheeled motor vehicle used for transportation" },
+  { word: "house", hint: "a building for human habitation" },
+  { word: "phone", hint: "a device used for communication" },
+  { word: "rain", hint: "precipitation in the form of water droplets" },
+  { word: "beach", hint: "a sandy shore by the sea or ocean" },
+  { word: "coffee", hint: "a brewed beverage made from roasted coffee beans" },
+  { word: "bicycle", hint: "a vehicle with two wheels propelled by pedals" },
+  { word: "music", hint: "the art of arranging sounds in time" },
+  { word: "tree", hint: "a woody perennial plant with a single main stem or trunk" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "bird", hint: "a warm-blooded egg-laying vertebrate animal" },
+  { word: "school", hint: "an institution for educating children" },
+  { word: "lake", hint: "a large body of water surrounded by land" },
+  { word: "cake", hint: "a sweet baked dessert" },
+  { word: "star", hint: "a luminous celestial body in the sky" },
+  { word: "watch", hint: "a small timepiece worn on the wrist" },
+  { word: "mountain", hint: "a large landform that rises above its surroundings" },
+  { word: "book", hint: "a written or printed work consisting of pages" },
+  { word: "flower", hint: "the reproductive structure found in flowering plants" },
+  { word: "river", hint: "a large natural stream of water flowing in a channel" },
+  { word: "shirt", hint: "a garment worn on the upper body" },
+  { word: "cloud", hint: "a visible mass of condensed water vapor" },
+  { word: "pencil", hint: "a writing implement with a graphite core" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "dog", hint: "a domesticated carnivorous mammal" },
+  { word: "moon", hint: "the natural satellite of the Earth" },
+  { word: "car", hint: "a wheeled motor vehicle used for transportation" },
+  { word: "house", hint: "a building for human habitation" },
+  { word: "phone", hint: "a device used for communication" },
+  { word: "rain", hint: "precipitation in the form of water droplets" },
+  { word: "beach", hint: "a sandy shore by the sea or ocean" },
+  { word: "coffee", hint: "a brewed beverage made from roasted coffee beans" },
+  { word: "bicycle", hint: "a vehicle with two wheels propelled by pedals" },
+  { word: "music", hint: "the art of arranging sounds in time" },
+  { word: "tree", hint: "a woody perennial plant with a single main stem or trunk" },
+  { word: "chair", hint: "a piece of furniture for sitting" },
+  { word: "bird", hint: "a warm-blooded egg-laying vertebrate animal" },
+  { word: "school", hint: "an institution for educating children" },
+  { word: "lake", hint: "a large body of water surrounded by land" },
+  { word: "cake", hint: "a sweet baked dessert" },
+  { word: "star", hint: "a luminous celestial body in the sky" },
+  { word: "watch", hint: "a small timepiece worn on the wrist" },
+  { word: "mountain", hint: "a large landform that rises above its surroundings" },
+  { word: "book", hint: "a written or printed work consisting of pages" },
+  { word: "flower", hint: "the reproductive structure found in flowering plants" },
+  { word: "river", hint: "a large natural stream of water flowing in a channel" },
+  { word: "shirt", hint: "a garment worn on the upper body" },
+  { word: "cloud", hint: "a visible mass of condensed water vapor" },
+  { word: "pencil", hint: "a writing implement with a graphite core" }]
+  run()
+  function run(){
+    let runCount=0
+    let count=0
+    let s=""
+    let checkIndex=[]
+        let alphabetesContainer=document.getElementById("alphabets")
+        const alphabets = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+        let random=Math.floor(Math.random()*words.length)
+        let word=words[random].word
+        let hint=words[random].hint
+        let wordContainer=document.getElementById("word")
+        let hintContainer=document.getElementById("hint")
+        let incorrect=document.getElementById("incorrect")
+        for(x in word){
+            wordContainer.innerText+="_"
+        }
+        
+        hintContainer.innerText=hint
+        incorrect.innerText="0/6 chances"
+        for(x in alphabets){
+                let letter=document.createElement("button")
+            letter.className="letter"
+            letter.innerText=alphabets[x].toUpperCase()
+            letter.value=alphabets[x]
+            alphabetesContainer.appendChild(letter)
+            runCount+=1
+
+            letter.addEventListener('click',()=>{
+                s=""
+                letter.disabled=true
+                letter.style.backgroundColor="grey"
+                
+                if(word.includes(letter.value)){
+                    checkIndex.push(letter.value)
+                    for(x in word){
+                        if(checkIndex.includes(word[x])){
+                            s+=word[x]
+                        }
+                        else{
+                            s+="_"
+                        }
+                    }
+                    wordContainer.innerText=s
+                }
+                else{
+                    count+=1
+                }
+                incorrect.innerText=`${count}/6 chances`
+                if(s==word){
+                    alert("you win")
+                    let child = alphabetesContainer.lastElementChild;
+                    while (child) {
+                        alphabetesContainer.removeChild(child);
+                    child = alphabetesContainer.lastElementChild;
+                    }
+                    run()
+                    }
+
+                if(count==6){
+                    alert("you lose")
+                    let child = alphabetesContainer.lastElementChild;
+                    while (child) {
+                        alphabetesContainer.removeChild(child);
+                    child = alphabetesContainer.lastElementChild;
+                    }
+                    run()
+                }
+            })
+        }
+
+    }
+    </script>
+</body>
+</html>
